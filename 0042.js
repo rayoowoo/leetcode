@@ -1,5 +1,6 @@
 function calculateWater(arr) {
-    const compare = arr[0];
+    const compare = arr[0] < arr[arr.length - 1] ? arr[0] : arr[arr.length - 1];
+    // const compare = arr[0];
     let sum = 0;
     arr.slice(1, arr.length - 1).forEach(el => {
         sum += compare - el;
@@ -7,27 +8,53 @@ function calculateWater(arr) {
     return sum;
 }
 
-function trap (height) {
-    let results = []
-    height.forEach((el, i) => {
-        if (i > height.length - 3) return;
-        let sample = [el];
-        let idx = i + 1;
-        while (height[idx] < el && idx < height.length) {
-            sample.push(height[idx]);
-            idx++;
+
+
+var trap = function (height) {
+    const sets = [];
+    function _trap (height, reverse=false) {
+        let results = []
+        let i = 0;
+        while (i < height.length - 2) {
+            let sample = [height[i]];
+            let idx = i + 1;
+            while (height[idx] < height[i] && idx < height.length) {
+                sample.push(height[idx]);
+                idx++
+            }
+            if (idx !== height.length) sample.push(height[idx])
+            const bool = reverse ? sample[0] < sample[sample.length - 1] : sample[0] <= sample[sample.length - 1]
+            if (sample.length > 2 && bool) {
+                results.push(sample);
+                i = idx;
+            } else {
+                i++;
+            }
         }
-        if (idx !== height.length) sample.push(height[idx])
-        if (sample.length > 2 && sample[0] <= sample[sample.length - 1]) results.push(sample);
-    })
-    console.log(results);
+        console.log("results", results);
+        console.log("sets", sets);
+        
+        if (reverse) {
+            results = results.filter( el => {
+                return !sets.some( str => str.includes(el.join("")));
+            })
+        } else {
+            results.forEach(el => {
+                sets.push(el.reverse().join(""));
+            })
+        }
+        
 
-    let sum = 0;
-    results.forEach(el => {
-        sum += calculateWater(el);
-    })
+        let sum = 0;
+        results.forEach(el => {
+            sum += calculateWater(el);
+        })
 
-    return sum;
+        return sum;
+    }
+    const front = _trap(height);
+    const back = _trap(height.reverse(), true);
+    return front + back;
 };
 
-console.log(calculateWater([2, 1, 0, 1, 3]));
+console.log(trap([6, 8, 5, 0, 0, 6, 5]))
