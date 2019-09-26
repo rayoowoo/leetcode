@@ -1,3 +1,5 @@
+// NOT ACTUALLY CIRCULAR :(
+
 var MyCircularDeque = function (k) {
     this.size = k;
     this.queue = [];
