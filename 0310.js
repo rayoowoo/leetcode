@@ -33,3 +33,26 @@ var findMinHeightTrees = function (n, edges) {
     return minRoots;
 
 };
+
+// someone else's solution:
+// https://leetcode.com/problems/minimum-height-trees/discuss/233891/Concise-Javascript
+
+var findMinHeightTrees = function (n, edges) {
+    let nodes = {};
+    for (let i = 0; i < n; i++) nodes[i] = new Set();
+    for (let [a, b] of edges) {
+        nodes[a].add(b);
+        nodes[b].add(a);
+    }
+
+    while (Object.keys(nodes).length > 2) {
+        Object.keys(nodes).filter(v => nodes[v].size < 2).forEach(v => {
+            nodes[v].forEach(nextv => {
+                nodes[nextv].delete(parseInt(v))
+            });
+            delete nodes[v];
+        })
+    }
+
+    return Object.keys(nodes);
+};
